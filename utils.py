@@ -2,7 +2,7 @@
 # ======================================
 # Telegram Scraper Utility Functions
 # ======================================
-# This module provides helper functions for mining, directory management,
+# This module provides helper functions for scraping, directory management,
 # and exporting Telegram chat data to CSV files.
 #
 # Author: sergejlembke
@@ -22,23 +22,23 @@ from scraping import scraping
 
 def start(days_back_all, chat_id, project_name, api_id, api_hash, phone_number, cwd):
     """
-    Main entry point for mining Telegram messages for a specific project.
+    Main entry point for scraping Telegram messages for a specific project.
 
     Args:
         days_back_all (int): Number of days to look back for messages.
         chat_id (str|int): Telegram chat/channel/group identifier.
-        project_name (str): Name for the current mining project.
+        project_name (str): Name for the current scraping project.
         api_id (int): Telegram API ID.
         api_hash (str): Telegram API hash.
         phone_number (str): Telegram account phone number.
-        cwd (str): Base directory for storing mined data.
+        cwd (str): Base directory for storing scraped data.
     """
-    print(f'>>> BEGIN MINING FOR PROJECT: {project_name} <<<')
-    cwd_new = os.path.join(str(cwd), 'Mining_Data', str(project_name))
+    print(f'>>> BEGIN SCRAPING FOR PROJECT: {project_name} <<<')
+    cwd_new = os.path.join(str(cwd), 'Scraped_Telegram_Data', str(project_name))
     checkdir(cwd_new)
     data, empty = scraping(days_back_all, chat_id, project_name, api_id, api_hash, phone_number, cwd_new)
     exportcsv(data, project_name, empty, cwd_new)
-    print(f'>>> FINISHED MINING FOR PROJECT: {project_name} <<<')
+    print(f'>>> FINISHED SCRAPING FOR PROJECT: {project_name} <<<')
     return
 
 def checkdir(cwd_new):
@@ -58,7 +58,7 @@ def exportcsv(data, project_name, empty, cwd_new):
 
     Args:
         data (list): List of extracted message details.
-        project_name (str): Name of the mining project.
+        project_name (str): Name of the scraping project.
         empty (bool): True if no messages found, False otherwise.
         cwd_new (str): Directory to save the CSV file.
     """
@@ -80,7 +80,7 @@ def exportcsv(data, project_name, empty, cwd_new):
 
     # Define DataFrame columns for channel/chat exports
     df = pd.DataFrame(data, columns=[
-        'CHANNEL TITLE',
+        'SENDER NAME',
         'SENDER ID',
         'MESSAGE ID',
         'DATE',
