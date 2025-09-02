@@ -2,7 +2,7 @@
 # Last edit: 2024-11-18
 
 import os
-from func_aux import start
+from utils import start
 
 # Get parent directory of current working directory
 pdir = os.path.dirname(os.getcwd())
@@ -13,7 +13,7 @@ days_back = int(input('Enter time frame (in days, starting from today) to extrac
 # Enter API id, API hash and phone number of your Telegram API and account
 api_id = 123456789
 api_hash = 'YourApiHash'
-phone_number = '+47123456789'
+phone_number = '+49123456789'
 
 # To extract data from multiple chats, duplicate the following lines of code from 'def project_123():' until 'project_123()' for each project
 # info regarding chat id: For private channels & group chats the format is: -100 and then the channel id 123456..

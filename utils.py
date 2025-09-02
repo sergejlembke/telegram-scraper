@@ -3,7 +3,7 @@
 
 
 from datetime import datetime
-from func_mining import mining
+from utils_scraping import mining
 import pandas as pd
 import os
 
