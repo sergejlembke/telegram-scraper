@@ -1,55 +1,84 @@
+# -*- coding: utf-8 -*-
+# ===============================
+# Telegram Scraper Main Script
+# ===============================
+# This script extracts messages from specified Telegram chats using the Telegram API.
+# Configure your API credentials and specify the chats to scrape below.
+#
+# Author: sergejlembke
+# License: See LICENSE file
+# ===============================
+
 # --- Standard library imports ---
 import os
 
-# --- Local imports ---
+# --- Local module imports ---
 from utils import start
 
-# Get parent directory of current working directory
+# Get the parent directory of the current working directory
 pdir = os.path.dirname(os.getcwd())
 
-# Prompt user to enter time frame (in days) in which messages should get searched for
-days_back = int(input('Enter time frame (in days, starting from today) to extract messages from: '))
+# Prompt the user to enter the time frame (in days) for message extraction
+days_back = int(input(
+    'Enter the time frame (in days, starting from today) to extract messages from: '
+))
 
-# Enter API id, API hash and phone number of your Telegram API and account
-api_id = 123456789
-api_hash = 'YourApiHash'
-phone_number = '+49123456789'
+# ===============================
+# Telegram API Credentials
+# ===============================
+# Replace the following values with your own Telegram API credentials.
+# You can obtain your API ID and API hash from https://my.telegram.org
+api_id = 123456789  # Your Telegram API ID
+api_hash = 'YourApiHash'  # Your Telegram API hash
+phone_number = '+49123456789'  # Your Telegram account phone number
 
-# To extract data from multiple chats, duplicate the following lines of code from 'def project_123():' until 'project_123()' for each project
-# info regarding chat id: For private channels & group chats the format is: '-100' followed by the channel id '123456..'
-#                         For public channels the format is: '@abcxyz..'
-#                         For regular chats the format is: '123456..'
+# ===============================
+# Chat Identification Information
+# ===============================
+# To extract data from multiple chats, define a function for each chat as shown below.
+#
+# Chat ID formats:
+#   - Private channels & group chats: '-100' followed by the channel/group ID (e.g., -100123456789)
+#   - Public channels: '@channelusername' (e.g., @NameOfPublicChannel)
+#   - Regular chats: user ID as a string (e.g., '123456789')
+#
+# Duplicate and modify the project functions below for each chat you wish to scrape.
 
 def project_01():
     """
-    Example function to extract messages from a private channel or group chat.
+    Extract messages from a private channel or group chat.
+    Update 'project_name' and 'chat_id' as needed.
     """
     project_name = 'Example Private Channel or Group Chat'
     chat_id = -100123456789
 
-    # Start scraping for the specified chat
+    # Start scraping messages for the specified chat
     start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
-project_01()
 
+project_01()
 
 def project_02():
     """
-    Example function to extract messages from a public channel.
+    Extract messages from a public channel.
+    Update 'project_name' and 'chat_id' as needed.
     """
     project_name = 'Example Public Channel'
     chat_id = '@NameOfPublicChannel'
 
-    # Start scraping for the specified chat
+    # Start scraping messages for the specified chat
     start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
+
 project_02()
 
 def project_03():
     """
-    Example function to extract messages from a regular chat.
+    Extract messages from a regular chat (user-to-user).
+    Update 'project_name' and 'chat_id' as needed.
     """
     project_name = 'Example Regular Chat'
     chat_id = '123456789'
 
-    # Start scraping for the specified chat
+    # Start scraping messages for the specified chat
     start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
+
 project_03()
