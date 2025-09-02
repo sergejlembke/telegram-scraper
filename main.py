@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
-# Last edit: 2024-11-18
-
+# --- Standard library imports ---
 import os
+
+# --- Local imports ---
 from utils import start
 
 # Get parent directory of current working directory
@@ -16,20 +16,40 @@ api_hash = 'YourApiHash'
 phone_number = '+49123456789'
 
 # To extract data from multiple chats, duplicate the following lines of code from 'def project_123():' until 'project_123()' for each project
-# info regarding chat id: For private channels & group chats the format is: -100 and then the channel id 123456..
-#                         For public channels the format is: '@abcxyz..' / for chats the format is: 123456..
+# info regarding chat id: For private channels & group chats the format is: '-100' followed by the channel id '123456..'
+#                         For public channels the format is: '@abcxyz..'
+#                         For regular chats the format is: '123456..'
+
 def project_01():
-    project_name = 'Example Private Channel'
+    """
+    Example function to extract messages from a private channel or group chat.
+    """
+    project_name = 'Example Private Channel or Group Chat'
     chat_id = -100123456789
 
+    # Start scraping for the specified chat
     start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
 project_01()
 
 
 def project_02():
+    """
+    Example function to extract messages from a public channel.
+    """
     project_name = 'Example Public Channel'
     chat_id = '@NameOfPublicChannel'
 
+    # Start scraping for the specified chat
     start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
 project_02()
 
+def project_03():
+    """
+    Example function to extract messages from a regular chat.
+    """
+    project_name = 'Example Regular Chat'
+    chat_id = '123456789'
+
+    # Start scraping for the specified chat
+    start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
+project_03()
