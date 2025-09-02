@@ -1,0 +1,3 @@
+pandas
+telethon
+deep_translator
