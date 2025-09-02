@@ -10,10 +10,15 @@
 # Last edit: 2024-11-18
 # ======================================
 
-from datetime import datetime
-from scraping import scraping
-import pandas as pd
+# --- Standard library imports ---
 import os
+from datetime import datetime
+
+# --- Third-party imports ---
+import pandas as pd
+
+# --- Local module imports ---
+from scraping import scraping
 
 def start(days_back_all, chat_id, project_name, api_id, api_hash, phone_number, cwd):
     """
