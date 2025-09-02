@@ -37,19 +37,27 @@ phone_number = '+49123456789'  # Your Telegram account phone number
 # ===============================
 # To extract data from multiple chats, define a function for each chat as shown below.
 #
+# To get the chat ID, login to the web version of Telegram and open the desired chat.
+# Click on the chat name at the top to open the chat info, where you can find the chat ID.
+#
 # Chat ID formats:
-#   - Private channels & group chats: '-100' followed by the channel/group ID (e.g., -100123456789)
+#   - Private channels: '-100' followed by the channel ID (e.g., -100123456789)
 #   - Public channels: '@channelusername' (e.g., @NameOfPublicChannel)
-#   - Regular chats: user ID as a string (e.g., '123456789')
+#   - Group chats: '-100' followed by the group ID (e.g., -100987654321) or '@GroupName'
+#   - Regular chats: user ID or username as a string (e.g., '123456789' or '@ExampleUserName')
 #
 # Duplicate and modify the project functions below for each chat you wish to scrape.
+#
+# For each chat you want to scrape, you'll get a message with the verification code sent to your Telegram account.
+# Enter the code in the terminal when asked for it.
+# This is only needed the first time a new chat is added.
 
 def project_01():
     """
-    Extract messages from a private channel or group chat.
+    Extract messages from a private channel.
     Update 'project_name' and 'chat_id' as needed.
     """
-    project_name = 'Example Private Channel or Group Chat'
+    project_name = 'Example Private Channel'
     chat_id = -100123456789
 
     # Start scraping messages for the specified chat
@@ -72,13 +80,27 @@ project_02()
 
 def project_03():
     """
-    Extract messages from a regular chat (user-to-user).
+    Extract messages from a group chat.
     Update 'project_name' and 'chat_id' as needed.
     """
-    project_name = 'Example Regular Chat'
-    chat_id = '123456789'
+    project_name = 'Example Group Chat'
+    chat_id = '-100987654321' # or '@GroupName'
 
     # Start scraping messages for the specified chat
     start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
 
 project_03()
+
+
+def project_04():
+    """
+    Extract messages from a regular chat (user-to-user).
+    Update 'project_name' and 'chat_id' as needed.
+    """
+    project_name = 'Example Regular Chat'
+    chat_id = '123456789' # or '@ExampleUserName'
+
+    # Start scraping messages for the specified chat
+    start(days_back, chat_id, project_name, api_id, api_hash, phone_number, pdir)
+
+project_04()
