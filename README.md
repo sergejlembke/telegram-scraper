@@ -47,9 +47,34 @@ pip install -r requirements.txt
    - Create an app at [my.telegram.org](https://my.telegram.org)  
    - Copy your `api_id` and `api_hash`
 
-2. **Run the scraper**
+2. **Prepare your configuration**
+    - Copy the provided `config.example.json` to `config.json` in the project root:
+       ```bash
+       cp config.example.json config.json
+       # On Windows:
+       copy config.example.json config.json
+       ```
+    - Open `config.json` and enter your own Telegram API credentials and the chat IDs you want to scrape. Example structure:
+       ```json
+      {
+         "api_id": "YOUR_API_ID",
+         "api_hash": "YOUR_API_HASH",
+         "phone_number": "YOUR_PHONE_NUMBER",
+         "chats": [
+            {"chat_name": "Example Private Channel", "chat_id": -100123456789},
+            {"chat_name": "Example Public Channel", "chat_id": "@ExamplePublicChannelName"},
+            {"chat_name": "Example Group Chat1", "chat_id": -100987654321},
+            {"chat_name": "Example Group Chat2", "chat_id": "@ExampleGroupName"},
+            {"chat_name": "Example Regular Chat1", "chat_id": 123456789},
+            {"chat_name": "Example Regular Chat2", "chat_id": "@ExampleUserName"}
+
+         ]
+      }
+       ```
+
+3. **Run the scraper**
    ```bash
-   python scraper.py
+   python main.py
 
     Choose your export option
 
@@ -57,24 +82,8 @@ pip install -r requirements.txt
 
         pandas DataFrame (for further analysis in Python)
    ```
-
-3. **Choose your export option**
-   - `csv` file  
-   - `pandas DataFrame` (for further analysis in Python)
-  
-
 ---
 
-## ⚙️ Configuration
-
-Edit the `config.json` (or set environment variables) to specify:
-
-- `api_id`, `api_hash` (Telegram credentials)  
-- Target chats / groups / channels  
-- Translation service (`google`, `deepl`, etc.)  
-- Export format (`csv`, `dataframe`)  
-
----
 
 ## 📂 Example Output
 
