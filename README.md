@@ -18,13 +18,26 @@ All collected data can be stored in a **pandas DataFrame** or exported to **CSV*
 
 ## 🛠 Installation
 
-Clone the repository and install dependencies:
+
+Clone the repository and install dependencies. It is recommended to use a Python virtual environment:
 
 ```bash
-git clone https://github.com/your-username/telegram-scraper-tool.git
-cd telegram-scraper-tool
+# Clone the repository and change into the directory
+git clone https://github.com/sergejlembke/telegram-scraper.git
+cd telegram-scraper
+
+# Create and activate a virtual environment (recommended)
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
+
+**Required Python version:** 3.10 or higher
 
 ---
 
