@@ -1,0 +1,14 @@
+{
+    "api_id": "YOUR_API_ID",
+    "api_hash": "YOUR_API_HASH",
+    "phone_number": "YOUR_PHONE_NUMBER",
+    "chats": [
+        {"chat_name": "Example Private Channel", "chat_id": -100123456789},
+        {"chat_name": "Example Public Channel", "chat_id": "@ExamplePublicChannelName"},
+        {"chat_name": "Example Group Chat1", "chat_id": -100987654321},
+        {"chat_name": "Example Group Chat2", "chat_id": "@ExampleGroupName"},
+        {"chat_name": "Example Regular Chat1", "chat_id": 123456789},
+        {"chat_name": "Example Regular Chat2", "chat_id": "@ExampleUserName"}
+
+    ]
+}
