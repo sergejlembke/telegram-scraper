@@ -22,7 +22,7 @@ from deep_translator import GoogleTranslator
 # import nest_asyncio
 # nest_asyncio.apply()
 
-def scraping(days_back, chat_id, project_name, api_id, api_hash, phone_number, cwd_new):
+def scraping(days_back, chat_id, project_name, api_id, api_hash, phone_number, translation, cwd_new):
     """
     Extracts messages and media from a specified Telegram chat/channel/group.
 
@@ -97,14 +97,15 @@ def scraping(days_back, chat_id, project_name, api_id, api_hash, phone_number, c
                 )
             else:
                 media_path = ''
-
+    
             # Translate message text to English using Google Translator
-            # If message is empty, set a placeholder to avoid translation errors
-            if not message.text:
-                message.text = '[THIS MESSAGE CONTAINS NO TEXT]'
-            translated_text_google = GoogleTranslator(source='auto', target='en').translate(message.text)
-            # For DeepL translation, uncomment and configure your API key:
-            # translated_text_deepl = DeeplTranslator(api_key="your_api_key", source="auto", target="en", use_free_api=True).translate(message.text)
+            if translation['translate']:        
+                # If message is empty, set a placeholder to avoid translation errors
+                if not message.text:
+                    message.text = '[THIS MESSAGE CONTAINS NO TEXT]'
+                translated_text = GoogleTranslator(source=translation['source_language'], target=translation['target_language']).translate(message.text)
+                # For DeepL translation, uncomment and configure your API key:
+                # translated_text = DeeplTranslator(api_key="your_api_key", source="auto", target="en", use_free_api=True).translate(message.text)
 
             # Append extracted information to the data list
             # For channels, sender.title is used; for chats, sender.username may be more appropriate
@@ -114,8 +115,7 @@ def scraping(days_back, chat_id, project_name, api_id, api_hash, phone_number, c
                 message.id,
                 message.date,
                 message.text,
-                translated_text_google,
-                # translated_text_deepl,
+                translated_text,
                 media_path
             ])
 

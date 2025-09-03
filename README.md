@@ -54,23 +54,37 @@ pip install -r requirements.txt
        # On Windows:
        copy config.example.json config.json
        ```
-    - Open `config.json` and enter your own Telegram API credentials and the chat IDs you want to scrape. Example structure:
+    - Open `config.json` and enter your own Telegram API credentials, the desired translation settings, and the chat IDs you want to scrape. Example structure:
        ```json
       {
          "api_id": "YOUR_API_ID",
          "api_hash": "YOUR_API_HASH",
          "phone_number": "YOUR_PHONE_NUMBER",
+          "translation": [
+            {
+               "source_language": "auto",
+               "target_language": "en"
+            }
+         ],
          "chats": [
             {"chat_name": "Example Private Channel", "chat_id": -100123456789},
-            {"chat_name": "Example Public Channel", "chat_id": "@ExamplePublicChannelName"},
+            {"chat_name": "Example Public Channel", "chat_id": "@PublicChannelName"},
             {"chat_name": "Example Group Chat1", "chat_id": -100987654321},
-            {"chat_name": "Example Group Chat2", "chat_id": "@ExampleGroupName"},
+            {"chat_name": "Example Group Chat2", "chat_id": "@GroupName"},
             {"chat_name": "Example Regular Chat1", "chat_id": 123456789},
-            {"chat_name": "Example Regular Chat2", "chat_id": "@ExampleUserName"}
+            {"chat_name": "Example Regular Chat2", "chat_id": "@UserName"}
 
          ]
       }
        ```
+   - To get the chat ID, login to the web version of Telegram and open the desired chat.
+   - Click on the chat name at the top to open the chat info, where you can find the chat ID.
+   - Insert the chat ID in the config.json in the following formats:
+     - Private channels: '-100' followed by the channel ID (e.g., -100123456789)
+     - Public channels: '@channelusername' (e.g., @PublicChannelName)
+     - Group chats: '-100' followed by the group ID (e.g., -100987654321) or '@GroupName'
+     - Regular chats: user ID or username as a string (e.g., '123456789' or '@UserName')
+
 
 3. **Run the scraper**
    ```bash
@@ -89,9 +103,9 @@ pip install -r requirements.txt
 
 CSV file structure:
 
-| chat_id | sender | message | timestamp   | language | translation | media_path |
-|---------|--------|---------|-------------|----------|-------------|------------|
-| 123456  | Alice  | Hello   | 2025-08-20  | en       | Hallo       | ./media/... |
+| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE | MESSAGE | TRANSLATED_MESSAGE | MEDIA_PATH |
+|-------------|-----------|------------|------|---------|--------------------------|------------|
+| PythonLover | 123456789    | 742      | 2025-09-02 10:44:22+00:00  | Ich liebe Python       | I love Python                    | ./Scraped_Telegram_Data/PythonLover/PythonLover_photo_742.jpg |
 
 ---
 
