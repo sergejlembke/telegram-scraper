@@ -54,26 +54,33 @@ pip install -r requirements.txt
        # On Windows:
        copy config.example.json config.json
        ```
-    - Open `config.json` and enter your own Telegram API credentials, the desired translation settings, and the chat IDs you want to scrape. Example structure:
+    - Open `config.json` and enter
+       - your own Telegram API credentials
+       - the desired translation settings
+       - the export options (file format and append mode)
+       - the chat IDs you want to scrape
+    - Example `config.json`:
        ```json
       {
          "api_id": "YOUR_API_ID",
          "api_hash": "YOUR_API_HASH",
          "phone_number": "YOUR_PHONE_NUMBER",
-          "translation": [
-            {
-               "source_language": "auto",
-               "target_language": "en"
-            }
-         ],
+         "translation": {
+            "translate": true,
+            "source_language": "auto",
+            "target_language": "en"
+         },
+         "export_option": {
+            "append": true,
+            "format": ["json", "csv"]
+         },
          "chats": [
             {"chat_name": "Example Private Channel", "chat_id": -100123456789},
-            {"chat_name": "Example Public Channel", "chat_id": "@PublicChannelName"},
+            {"chat_name": "Example Public Channel", "chat_id": "@ExamplePublicChannelName"},
             {"chat_name": "Example Group Chat1", "chat_id": -100987654321},
-            {"chat_name": "Example Group Chat2", "chat_id": "@GroupName"},
+            {"chat_name": "Example Group Chat2", "chat_id": "@ExampleGroupName"},
             {"chat_name": "Example Regular Chat1", "chat_id": 123456789},
-            {"chat_name": "Example Regular Chat2", "chat_id": "@UserName"}
-
+            {"chat_name": "Example Regular Chat2", "chat_id": "@ExampleUserName"}
          ]
       }
        ```
@@ -89,12 +96,6 @@ pip install -r requirements.txt
 3. **Run the scraper**
    ```bash
    python main.py
-
-    Choose your export option
-
-        csv file
-
-        pandas DataFrame (for further analysis in Python)
    ```
 ---
 
