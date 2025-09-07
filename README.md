@@ -88,10 +88,9 @@ pip install -r requirements.txt
    - Click on the chat name at the top to open the chat info, where you can find the chat ID.
    - Insert the chat ID in the config.json in the following formats:
      - Private channels: '-100' followed by the channel ID (e.g., -100123456789)
-     - Public channels: '@channelusername' (e.g., @PublicChannelName)
+     - Public channels: '@channel-username' (e.g., @PublicChannelName)
      - Group chats: '-100' followed by the group ID (e.g., -100987654321) or '@GroupName'
-     - Regular chats: user ID or username as a string (e.g., '123456789' or '@UserName')
-
+     - Regular chats: user ID or username as a string (e.g., 123456789 or '@UserName')
 
 3. **Run the scraper**
    ```bash
@@ -104,9 +103,9 @@ pip install -r requirements.txt
 
 CSV file structure:
 
-| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE | MESSAGE | TRANSLATED_MESSAGE | MEDIA_PATH |
-|-------------|-----------|------------|------|---------|--------------------------|------------|
-| PythonLover | 123456789    | 742      | 2025-09-02 10:44:22+00:00  | Ich liebe Python       | I love Python                    | ./Scraped_Telegram_Data/PythonLover/PythonLover_photo_742.jpg |
+| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE                      | MESSAGE          | TRANSLATED_MESSAGE | MEDIA_PATH                                                    |
+|-------------|-----------|------------|---------------------------|------------------|--------------------|---------------------------------------------------------------|
+| PythonLover | 123456789 | 742        | 2025-09-02 10:44:22+00:00 | Ich liebe Python | I love Python      | ./Scraped_Telegram_Data/PythonLover/PythonLover_photo_742.jpg |
 
 ---
 
