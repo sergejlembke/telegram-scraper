@@ -29,17 +29,13 @@ end_date = input('Enter end date (YYYY-MM-DD or leave empty for now): ').strip()
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-api_id = int(config['api_id'])
+api_id = config['api_id']
 api_hash = config['api_hash']
 phone_number = config['phone_number']
 
 translation_option = config['translation']
 
-# translate = config['translation']['translate']
-# source_language = config['translation']['source_language']
-# target_language = config['translation']['target_language']
-
-export_option = config['export_option']
+export_option = config['export']
 
 chats = config['chats']
 
