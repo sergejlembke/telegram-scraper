@@ -11,17 +11,19 @@
 
 # --- Standard library imports ---
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from typing import List, Tuple, Union, Dict, Any
 
 # --- Third-party imports ---
 from telethon import TelegramClient
 from telethon.tl.types import PeerUser
-from deep_translator import GoogleTranslator
+# NOTE: Import translator lazily inside the function to avoid hard dependency
+# from deep_translator import GoogleTranslator
 
 # If running in Spyder or environments with nested event loops, uncomment below:
 # import nest_asyncio
 # nest_asyncio.apply()
+
 
 def scraping(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], project_name: str, api_id: int, api_hash: str, phone_number: str, translation_option: Dict[str, Any], cwd_new: str) -> Tuple[List[List[Any]], bool]:
     """
@@ -34,16 +36,16 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
     along with metadata for further processing or analysis.
 
     Args:
-        start_date (Union[str, datetime, None]): Inclusive start date-time for extraction. If None or empty, defaults to today at 00:00.
-        end_date (Union[str, datetime, None]): Inclusive end date-time for extraction. If None or empty, defaults to now.
-        chat_id (Union[str, int]): Unique identifier or username of the chat/group/channel to extract messages from.
-        project_name (str): Name of the project used to create a session for storing extracted data.
-        api_id (int): API ID for the Telegram client to connect to the Telegram server.
-        api_hash (str): API hash for the Telegram client to authenticate requests.
-        phone_number (str): Phone number linked to the Telegram account being used.
-        translation_option (Dict[str, Any]): Configuration for message text translation. Contains options for enabling translation,
+        start_date: Inclusive start date-time for extraction. If None or empty, defaults to today at 00:00.
+        end_date: Inclusive end date-time for extraction. If None or empty, defaults to now.
+        chat_id: Unique identifier or username of the chat/group/channel to extract messages from.
+        project_name: Name of the project used to create a session for storing extracted data.
+        api_id: API ID for the Telegram client to connect to the Telegram server.
+        api_hash: API hash for the Telegram client to authenticate requests.
+        phone_number: Phone number linked to the Telegram account being used.
+        translation_option: Configuration for message text translation. Contains options for enabling translation,
             source language, and target language.
-        cwd_new (str): Current working directory or path to save related files such as session, extracted media, etc.
+        cwd_new: Current working directory or path to save related files such as session, extracted media, etc.
 
     Returns:
         Tuple[List[List[Any]], bool]: A tuple containing a list of message metadata and a boolean `empty`,
@@ -53,9 +55,6 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
 
     # List to collect message data
     data = []
-
-    # Set the start time for message extraction (current time)
-    start_time = datetime.now()
 
     async def get_group_messages():
         # Initialize Telegram client session for this project
@@ -73,7 +72,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
         group = await client.get_entity(chat_id)
 
         # Prepare date range for message extraction
-        today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
         # Normalize input dates
         def _to_dt(val, default):
@@ -94,36 +93,42 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
                 ]
                 for f in fmts:
                     try:
-                        return datetime.strptime(v, f)
+                        # Make parsed datetime timezone-aware in UTC
+                        return datetime.strptime(v, f).replace(tzinfo=timezone.utc)
                     except Exception:
                         pass
                 # Fallback: try fromisoformat
                 try:
-                    return datetime.fromisoformat(v)
+                    dt = datetime.fromisoformat(v)
+                    if dt.tzinfo is None:
+                        return dt.replace(tzinfo=timezone.utc)
+                    return dt.astimezone(timezone.utc)
                 except Exception:
                     raise ValueError(f"Unrecognized date format: {val}")
             if isinstance(val, datetime):
-                return val
+                # Ensure tz-aware UTC
+                if val.tzinfo is None:
+                    return val.replace(tzinfo=timezone.utc)
+                return val.astimezone(timezone.utc)
             raise ValueError("start_date/end_date must be datetime, str, or None")
 
         start_dt = _to_dt(start_date, today_start)
-        end_dt = _to_dt(end_date, datetime.now())
+        end_dt = _to_dt(end_date, datetime.now(timezone.utc))
 
         # Ensure chronological order
         if end_dt < start_dt:
             start_dt, end_dt = end_dt, start_dt
 
-        # Iterate through messages, starting from the newest
-        async for message in client.iter_messages(group, min_id=0):
-            # Stop if message is older than the specified time frame
-            if message.date < start_dt:
-                break
-            else:
-                print(f"Extracted Message ID = {message.id} ; Date = {message.date}")
-
-            # Skip messages newer than end_dt (we iterate from newest to older)
+        # Iterate through messages in chronological order starting from start_dt (lower bound)
+        async for message in client.iter_messages(group, offset_date=start_dt, reverse=True):
+            # Stop if we moved past the end_dt (messages are increasing in time with reverse=True)
             if message.date > end_dt:
+                break
+            # Skip anything before the start_dt (shouldn't normally occur due to offset_date)
+            if message.date < start_dt:
                 continue
+
+            print(f"Extracted Message ID = {message.id} ; Date = {message.date}")
 
             # Get sender information
             sender = await client.get_entity(PeerUser(message.sender_id))
@@ -136,10 +141,10 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
                     file=f"{cwd_new}/{project_name}_photo_{message.id}.jpg"
                 )
             elif (
-                hasattr(message, 'media') and
-                hasattr(message.media, 'document') and
-                hasattr(message.media.document, 'mime_type') and
-                message.media.document.mime_type == 'video/mp4'
+                    hasattr(message, 'media') and
+                    hasattr(message.media, 'document') and
+                    hasattr(message.media.document, 'mime_type') and
+                    message.media.document.mime_type == 'video/mp4'
             ):
                 # Save video as 'video_<message.id>.mp4'
                 media_path = await client.download_media(
@@ -148,20 +153,23 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
                 )
             else:
                 media_path = ''
-    
-            # Translate message text to English using Google Translator
-            if translation_option['translate']:
+
+            # Translate message text to English using Google Translator (optional, safe)
+            translated_text = ''
+            if translation_option.get('translate'):
                 # If message is empty, set a placeholder to avoid translation errors
-                if not message.text:
-                    message.text = '[THIS MESSAGE CONTAINS NO TEXT]'
-                translated_text = GoogleTranslator(source=translation_option['source_language'], target=translation_option['target_language']).translate(message.text)
-                # For DeepL translation, uncomment and configure your API key:
-                # translated_text = DeeplTranslator(api_key="your_api_key", source="auto", target="en", use_free_api=True).translate(message.text)
-            else:
-                translated_text = ''
+                text_to_translate = message.text or ''
+                try:
+                    from deep_translator import GoogleTranslator  # lazy import
+                    translated_text = GoogleTranslator(
+                        source=translation_option.get('source_language', 'auto'),
+                        target=translation_option.get('target_language', 'en')
+                    ).translate(text_to_translate)
+                except Exception:
+                    # Fallback: skip translation silently if library or network not available
+                    translated_text = ''
 
             # Append extracted information to the data list
-            # For channels, sender.title is used; for chats, sender.username may be more appropriate
             data.append([
                 getattr(sender, 'title', getattr(sender, 'username', 'Unknown')),
                 message.sender_id,
