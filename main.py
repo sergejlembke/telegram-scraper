@@ -5,7 +5,7 @@
 # This script extracts messages from specified Telegram chats using the Telegram API.
 # Configure your API credentials and specify the chats to scrape below.
 #
-# Author: sergejlembke
+# Author: Sergej Lembke
 # License: See LICENSE file
 # ===============================
 
@@ -19,10 +19,9 @@ from utils import start
 # Get the parent directory of the current working directory
 pdir = os.path.dirname(os.getcwd())
 
-# Prompt the user to enter the time frame (in days) for message extraction
-days_back = int(input(
-    'Enter the time frame (in days, starting from today) to extract messages from: '
-))
+# Prompt the user to enter the time frame for message extraction
+start_date = input('Enter start date (YYYY-MM-DD or leave empty for today): ').strip()
+end_date = input('Enter end date (YYYY-MM-DD or leave empty for now): ').strip()
 
 # ===============================
 # Telegram API Credentials
@@ -34,9 +33,11 @@ api_id = int(config['api_id'])
 api_hash = config['api_hash']
 phone_number = config['phone_number']
 
-translate = config['translation']['translate']
-source_language = config['translation']['source_language']
-target_language = config['translation']['target_language']
+translation_option = config['translation']
+
+# translate = config['translation']['translate']
+# source_language = config['translation']['source_language']
+# target_language = config['translation']['target_language']
 
 export_option = config['export_option']
 
@@ -45,4 +46,5 @@ chats = config['chats']
 for chat in chats:
     chat_name = chat['chat_name']
     chat_id = chat['chat_id']
-    start(days_back, chat_id, chat_name, api_id, api_hash, phone_number, translate, source_language, target_language, export_option, pdir)
+    # Pass start_date and end_date directly; utils.start will normalize defaults
+    start(start_date, end_date, chat_id, chat_name, api_id, api_hash, phone_number, translation_option, export_option, pdir)

@@ -6,14 +6,14 @@ import json
 # This module provides helper functions for scraping, directory management,
 # and exporting Telegram chat data to CSV files.
 #
-# Author: sergejlembke
+# Author: Sergej Lembke
 # License: See LICENSE file
-# Last edit: 2024-11-18
 # ======================================
 
 # --- Standard library imports ---
 import os
 from datetime import datetime
+from typing import Union, Dict, Any
 
 # --- Third-party imports ---
 import pandas as pd
@@ -21,50 +21,84 @@ import pandas as pd
 # --- Local module imports ---
 from scraping import scraping
 
-def start(days_back_all, chat_id, project_name, api_id, api_hash, phone_number, translation, export_option, cwd):
+
+def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], project_name: str, api_id: int, api_hash: str, phone_number: str,
+          translation_option: Dict[str, Any], export_option: Dict[str, Any], cwd: str) -> None:
     """
-    Main entry point for scraping Telegram messages for a specific project.
+    Starts the process of scraping Telegram data for the specified project and parameters.
+    This function also handles exporting the scraped data in specified formats.
 
     Args:
-        days_back_all (int): Number of days to look back for messages.
-        chat_id (str|int): Telegram chat/channel/group identifier.
-        project_name (str): Name for the current scraping project.
-        api_id (int): Telegram API ID.
-        api_hash (str): Telegram API hash.
-        phone_number (str): Telegram account phone number.
-        cwd (str): Base directory for storing scraped data.
+        start_date: The start date for the data to be scraped. Accepts string or datetime
+            format, or None if not specified.
+        end_date: The end date for the data to be scraped. Accepts string or datetime
+            format, or None if not specified.
+        chat_id: The chat ID (or username) for the Telegram group or channel.
+        project_name: The name of the project that will organize the scraped data.
+        api_id: The API ID for authenticating with the Telegram API.
+        api_hash: The API hash for authenticating with the Telegram API.
+        phone_number: The associated phone number for the Telegram client.
+        translation_option: A dictionary specifying translation options for the scraped data.
+        export_option: A dictionary specifying export formats (e.g., CSV, JSON) and options
+            for the scraped data.
+        cwd: The current working directory where outputs will be stored.
+
+    Returns:
+        None
     """
     print(f'>>> BEGIN SCRAPING FOR PROJECT: {project_name} <<<')
     cwd_new = os.path.join(str(cwd), 'Scraped_Telegram_Data', str(project_name))
-    checkdir(cwd_new)
-    data, empty = scraping(days_back_all, chat_id, project_name, api_id, api_hash, phone_number, translation, cwd_new)
+    check_dir(cwd_new)
+    data, empty = scraping(start_date, end_date, chat_id, project_name, api_id, api_hash, phone_number, translation_option, cwd_new)
     if 'csv' in export_option['format']:
-        exportcsv(data, project_name, empty, export_option , cwd_new)
+        export_csv(data, project_name, empty, export_option, cwd_new)
     if 'json' in export_option['format']:
-        exportjson(data, project_name, empty, export_option, cwd_new)
+        export_json(data, project_name, empty, export_option, cwd_new)
     print(f'>>> FINISHED SCRAPING FOR PROJECT: {project_name} <<<')
     return
 
-def checkdir(cwd_new):
+def check_dir(cwd_new):
     """
-    Checks if the target directory exists, and creates it if not.
+    Checks and creates a directory if it does not exist.
+
+    This function checks whether a directory specified by the `cwd_new`
+    parameter exists. If the directory does not exist, it creates the
+    directory.
 
     Args:
-        cwd_new (str): Path to the directory to check/create.
+        cwd_new: A path to the directory to check or create. The path
+            can be a string or a pathlib.Path object.
+
+    Returns:
+        None
     """
     if not os.path.isdir(str(cwd_new)):
         os.makedirs(str(cwd_new))
     return
 
-def exportcsv(data, project_name, empty, export_option, cwd_new):
+def export_csv(data, project_name, empty, export_option, cwd_new):
     """
-    Exports harvested Telegram data to a CSV file in the target directory.
+    Exports chat data to a CSV file, with the ability to append to or create new
+    CSV files for the specified project. The function also formats the filename
+    based on the current date and time.
 
     Args:
-        data (list): List of extracted message details.
-        project_name (str): Name of the scraping project.
-        empty (bool): True if no messages found, False otherwise.
-        cwd_new (str): Directory to save the CSV file.
+        data: list
+            A list of dictionaries containing chat data to be exported. Each
+            dictionary represents a row with keys such as 'SENDER_NAME',
+            'SENDER_ID', 'MESSAGE_ID', etc.
+        project_name: str
+            The name of the project, which is used as part of the generated
+            filename.
+        empty: bool
+            A flag indicating whether the data is empty. If True, the function
+            will immediately return without performing any operations.
+        export_option: dict
+            A dictionary containing export options, such as whether to append
+            data to an existing file. The dictionary must include a key
+            'append' with a boolean value.
+        cwd_new: str
+            The directory path where the CSV file(s) should be saved.
     """
     if empty:
         return
@@ -117,15 +151,31 @@ def exportcsv(data, project_name, empty, export_option, cwd_new):
     print(f'EXTRACTION COMPLETED. Data saved in: {output_path}')
     return
 
-def exportjson(data, project_name, empty, export_option, cwd_new):
+def export_json(data, project_name, empty, export_option, cwd_new):
     """
-    Exports harvested Telegram data to a JSON file in the target directory.
+    Exports data to a JSON file, with an option to append new data to an existing file.
+    The function handles extraction, conversion, and saving of chat content into
+    a structured JSON format. It generates a timestamp-based filename for the output
+    file to ensure uniqueness and facilitates easy searching and tracking of exported files.
 
     Args:
-        data (list): List of extracted message details.
-        project_name (str): Name of the scraping project.
-        empty (bool): True if no messages found, False otherwise.
-        cwd_new (str): Directory to save the JSON file.
+        data: List of lists containing chat information. Each sublist represents a message
+            and contains data elements such as sender name, sender ID, message ID, date,
+            message content, translated message, and media path.
+        project_name: Name of the project, used for generating the name of the output JSON file.
+        empty: Boolean flag to indicate if the data is empty. If True, the function
+            immediately returns without performing further processing.
+        export_option: Dictionary containing options for export behavior. If the 'append'
+            key is set to True, the function appends new data to an existing JSON file if
+            one exists.
+        cwd_new: Path to the directory where the output JSON file should be saved.
+
+    Returns:
+        None
+
+    Raises:
+        Will raise an exception if file write operations fail during the JSON export process.
+
     """
     if empty:
         return
@@ -140,14 +190,14 @@ def exportjson(data, project_name, empty, export_option, cwd_new):
     date_print = (f'{print_year}-{print_month}-{print_day}_'
                   f'{print_hour}-{print_minute}-{print_second}')
 
+    # Build base map by MESSAGE_ID
+    new_data = {str(row[2]): row for row in data}  # MESSAGE_ID is at index 2
+
     if export_option['append']:
         # Find latest JSON file for this project (if any)
         import glob
         pattern = os.path.join(cwd_new, f'{project_name}_data_*.json')
         existing_files = sorted(glob.glob(pattern), reverse=True)
-
-        # Deduplicate by MESSAGE_ID
-        new_data = {str(row[2]): row for row in data}  # MESSAGE_ID is at index 2
 
         if existing_files:
             with open(existing_files[0], 'r', encoding='utf-8') as f:
