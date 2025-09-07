@@ -124,7 +124,7 @@ def export_csv(data: Sequence[Sequence[Any]], project_name: str, empty: bool, ex
     export options. If the `empty` flag is True, no action is taken.
 
     Args:
-       data: A list of dictionaries containing export data. Each dictionary represents a single
+        data: A list of dictionaries containing export data. Each dictionary represents a single
             row of data with keys matching the default DataFrame column names ('SENDER_NAME', 'SENDER_ID', 'MESSAGE_ID', 
             'DATE', 'MESSAGE', 'TRANSLATED_MESSAGE', 'MEDIA_PATH').
         project_name: The project name used for naming the output CSV file.
