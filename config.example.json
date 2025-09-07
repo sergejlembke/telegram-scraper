@@ -7,7 +7,7 @@
         "source_language": "auto",
         "target_language": "en"
     },
-    "export_option": {
+    "export": {
         "append": true,
         "format": ["json", "csv"]
     },
