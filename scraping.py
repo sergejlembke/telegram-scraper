@@ -56,7 +56,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
     # List to collect message data
     data = []
 
-    async def get_group_messages():
+    async def _get_messages():
         # Initialize Telegram client session for this chat
         client = TelegramClient(
             f"{cwd_new}/{chat_name}.session", api_id, api_hash
@@ -69,7 +69,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
             await client.sign_in(phone_number, input('Enter the verification code sent by Telegram: '))
 
         # Get the entity (chat/channel/group) by chat_id
-        group = await client.get_entity(chat_id)
+        chat_entity = await client.get_entity(chat_id)
 
         # Prepare date range for message extraction
         today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -120,7 +120,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
             start_dt, end_dt = end_dt, start_dt
 
         # Iterate through messages in chronological order starting from start_dt (lower bound)
-        async for message in client.iter_messages(group, offset_date=start_dt, reverse=True):
+        async for message in client.iter_messages(chat_entity, offset_date=start_dt, reverse=True):
             # Stop if we moved past the end_dt (messages are increasing in time with reverse=True)
             if message.date > end_dt:
                 break
@@ -181,7 +181,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
             ])
 
     # Run the asynchronous message extraction
-    asyncio.run(get_group_messages())
+    asyncio.run(_get_messages())
 
     # Check if any messages were found in the selected time frame
     if not data:
