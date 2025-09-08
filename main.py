@@ -16,8 +16,8 @@ import json
 # --- Local module imports ---
 from utils import start
 
-# Get the parent directory of the current working directory
-pdir = os.path.dirname(os.getcwd())
+# Use the project root directory (current working directory where main.py runs)
+cwd = os.getcwd()
 
 # Prompt the user to enter the time frame for message extraction
 start_date = input('Enter start date (YYYY-MM-DD or leave empty for today): ').strip()
@@ -43,4 +43,4 @@ for chat in chats:
     chat_name = chat['chat_name']
     chat_id = chat['chat_id']
     # Pass start_date and end_date directly; utils.start will normalize defaults
-    start(start_date, end_date, chat_id, chat_name, api_id, api_hash, phone_number, translation_option, export_option, pdir)
+    start(start_date, end_date, chat_id, chat_name, api_id, api_hash, phone_number, translation_option, export_option, cwd)

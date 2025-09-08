@@ -46,7 +46,8 @@ def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime,
         None
     """
     print(f'>>> BEGIN SCRAPING FOR CHAT: {chat_name} <<<')
-    cwd_new = os.path.join(str(cwd), 'Scraped_Telegram_Data', str(chat_name))
+    # Store data inside project root under 'data/<chat_name>'
+    cwd_new = os.path.join(str(cwd), 'data', str(chat_name))
     check_dir(cwd_new)
     data, empty = scraping(start_date, end_date, chat_id, chat_name, api_id, api_hash, phone_number, translation_option, cwd_new)
 

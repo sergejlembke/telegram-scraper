@@ -103,9 +103,9 @@ pip install -r requirements.txt
 
 CSV file structure:
 
-| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE                      | MESSAGE          | TRANSLATED_MESSAGE | MEDIA_PATH                                                    |
-|-------------|-----------|------------|---------------------------|------------------|--------------------|---------------------------------------------------------------|
-| PythonLover | 123456789 | 742        | 2025-09-02 10:44:22+00:00 | Ich liebe Python | I love Python      | ./Scraped_Telegram_Data/PythonLover/PythonLover_photo_742.jpg |
+| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE                      | MESSAGE                | TRANSLATED_MESSAGE | MEDIA_PATH                                   |
+|-------------|-----------|------------|---------------------------|------------------------|--------------------|----------------------------------------------|
+| PythonDev   | 123456789 | 742        | 2025-09-02 10:44:22+00:00 | Ich arbeite mit Python | I work with Python | ./data/PythonLover/PythonLover_photo_742.jpg |
 
 ---
 
