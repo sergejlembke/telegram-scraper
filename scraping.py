@@ -25,12 +25,12 @@ from telethon.tl.types import PeerUser
 # nest_asyncio.apply()
 
 
-def scraping(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], project_name: str, api_id: int, api_hash: str, phone_number: str, translation_option: Dict[str, Any], cwd_new: str) -> Tuple[List[List[Any]], bool]:
+def scraping(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], chat_name: str, api_id: int, api_hash: str, phone_number: str, translation_option: Dict[str, Any], cwd_new: str) -> Tuple[List[List[Any]], bool]:
     """
     Extracts and processes messages from a Telegram group or channel for a specified time frame.
 
     This function connects to a specified Telegram group or channel using provided credentials
-    and project settings. It extracts messages from the group/channel within a user-specified
+    and settings. It extracts messages from the group/channel within a user-specified
     time frame between start_date and end_date. Messages can include text, sender information,
     media (photos or videos), and translation to English if enabled. The extracted data is saved
     along with metadata for further processing or analysis.
@@ -39,7 +39,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
         start_date: Inclusive start date-time for extraction. If None or empty, defaults to today at 00:00.
         end_date: Inclusive end date-time for extraction. If None or empty, defaults to now.
         chat_id: Unique identifier or username of the chat/group/channel to extract messages from.
-        project_name: Name of the project used to create a session for storing extracted data.
+        chat_name: Name of the chat used to create a session for storing extracted data.
         api_id: API ID for the Telegram client to connect to the Telegram server.
         api_hash: API hash for the Telegram client to authenticate requests.
         phone_number: Phone number linked to the Telegram account being used.
@@ -57,9 +57,9 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
     data = []
 
     async def get_group_messages():
-        # Initialize Telegram client session for this project
+        # Initialize Telegram client session for this chat
         client = TelegramClient(
-            f"{cwd_new}/{project_name}.session", api_id, api_hash
+            f"{cwd_new}/{chat_name}.session", api_id, api_hash
         )
         await client.connect()
 
@@ -138,7 +138,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
                 # Save photo as 'photo_<message.id>.jpg'
                 media_path = await client.download_media(
                     message.media,
-                    file=f"{cwd_new}/{project_name}_photo_{message.id}.jpg"
+                    file=f"{cwd_new}/{chat_name}_photo_{message.id}.jpg"
                 )
             elif (
                     hasattr(message, 'media') and
@@ -149,7 +149,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
                 # Save video as 'video_<message.id>.mp4'
                 media_path = await client.download_media(
                     message.media,
-                    file=f"{cwd_new}/{project_name}_video_{message.id}.mp4"
+                    file=f"{cwd_new}/{chat_name}_video_{message.id}.mp4"
                 )
             else:
                 media_path = ''

@@ -23,7 +23,7 @@ import pandas as pd
 from scraping import scraping
 
 
-def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], project_name: str, api_id: int, api_hash: str, phone_number: str,
+def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], chat_name: str, api_id: int, api_hash: str, phone_number: str,
           translation_option: Dict[str, Any], export_option: Dict[str, Any], cwd: str) -> None:
     """
     Starts the scraping process for Telegram data and exports the results based on the specified
@@ -34,7 +34,7 @@ def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime,
         start_date: The start date for the scraping period. Can be a string, datetime, or None.
         end_date: The end date for the scraping period. Can be a string, datetime, or None.
         chat_id: The unique identifier or username of the Telegram chat to scrape data from.
-        project_name: The name of the project under which the data will be organized and stored.
+        chat_name: The name of the chat under which the data will be organized and stored.
         api_id: The API ID for the Telegram client used during the scraping process.
         api_hash: The API hash for the Telegram client used during the scraping process.
         phone_number: The phone number linked to the Telegram account for authentication.
@@ -45,10 +45,10 @@ def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime,
     Returns:
         None
     """
-    print(f'>>> BEGIN SCRAPING FOR PROJECT: {project_name} <<<')
-    cwd_new = os.path.join(str(cwd), 'Scraped_Telegram_Data', str(project_name))
+    print(f'>>> BEGIN SCRAPING FOR CHAT: {chat_name} <<<')
+    cwd_new = os.path.join(str(cwd), 'Scraped_Telegram_Data', str(chat_name))
     check_dir(cwd_new)
-    data, empty = scraping(start_date, end_date, chat_id, project_name, api_id, api_hash, phone_number, translation_option, cwd_new)
+    data, empty = scraping(start_date, end_date, chat_id, chat_name, api_id, api_hash, phone_number, translation_option, cwd_new)
 
     # Build filename suffix based on end_date-start_date
     def _norm_dt(val, default):
@@ -91,10 +91,10 @@ def start(start_date: Union[str, datetime, None], end_date: Union[str, datetime,
     filename_suffix = f"{_fmt(start_dt)}_{_fmt(end_dt)}"
 
     if 'csv' in export_option['format']:
-        export_csv(data, project_name, empty, export_option, cwd_new, filename_suffix)
+        export_csv(data, chat_name, empty, export_option, cwd_new, filename_suffix)
     if 'json' in export_option['format']:
-        export_json(data, project_name, empty, export_option, cwd_new, filename_suffix)
-    print(f'>>> FINISHED SCRAPING FOR PROJECT: {project_name} <<<')
+        export_json(data, chat_name, empty, export_option, cwd_new, filename_suffix)
+    print(f'>>> FINISHED SCRAPING FOR CHAT: {chat_name} <<<')
     return
 
 
@@ -118,20 +118,20 @@ def check_dir(cwd_new: Union[str, 'pathlib.Path']) -> None:
     return
 
 
-def export_csv(data: Sequence[Sequence[Any]], project_name: str, empty: bool, export_option: Dict[str, Any], cwd_new: str, filename_suffix: str) -> None:
+def export_csv(data: Sequence[Sequence[Any]], chat_name: str, empty: bool, export_option: Dict[str, Any], cwd_new: str, filename_suffix: str) -> None:
     """
     Exports data to a CSV file. Handles appending data to an existing CSV file or creating a new one, based on the given 
     export options. If the `empty` flag is True, no action is taken.
 
     Args:
-       data: A list of dictionaries containing export data. Each dictionary represents a single
+        data: A list of dictionaries containing export data. Each dictionary represents a single
             row of data with keys matching the default DataFrame column names ('SENDER_NAME', 'SENDER_ID', 'MESSAGE_ID', 
             'DATE', 'MESSAGE', 'TRANSLATED_MESSAGE', 'MEDIA_PATH').
-        project_name: The project name used for naming the output CSV file.
+        chat_name: The chat name used for naming the output CSV file.
         empty: A flag to indicate whether the data is empty. If True, the function will return immediately without
             performing any operations.
         export_option: A dictionary containing configuration options for the export process. Supports
-            the 'append' key to indicate whether to append to the most recent existing CSV file for the project.
+            the 'append' key to indicate whether to append to the most recent existing CSV file for the chat.
         cwd_new: The working directory where the CSV file should be saved.
         filename_suffix: The suffix to add as part of the output file name if saving a new file. Ignored when
             appending to an existing file.
@@ -156,12 +156,12 @@ def export_csv(data: Sequence[Sequence[Any]], project_name: str, empty: bool, ex
     # Default: save new data unless appending to an existing dataset
     df_to_save = df_new
 
-    output_path = os.path.join(cwd_new, f'{project_name}_data_{filename_suffix}.csv')
+    output_path = os.path.join(cwd_new, f'{chat_name}_data_{filename_suffix}.csv')
 
     if bool(export_option.get('append', False)):
-        # Find latest CSV file for this project (if any)
+        # Find latest CSV file for this chat (if any)
         import glob
-        pattern = os.path.join(cwd_new, f'{project_name}_data_*.csv')
+        pattern = os.path.join(cwd_new, f'{chat_name}_data_*.csv')
         existing_files = sorted(glob.glob(pattern), reverse=True)
 
         if existing_files:
@@ -187,7 +187,7 @@ def export_csv(data: Sequence[Sequence[Any]], project_name: str, empty: bool, ex
                 min_str = _fmt_dt(min_dt) or 'unknown'
                 max_str = _fmt_dt(max_dt) or 'unknown'
                 # Build new target filename reflecting full range
-                new_output_path = os.path.join(cwd_new, f'{project_name}_data_{min_str}_{max_str}.csv')
+                new_output_path = os.path.join(cwd_new, f'{chat_name}_data_{min_str}_{max_str}.csv')
                 # If latest_file already has correct name, overwrite it; otherwise rename
                 if os.path.abspath(latest_file) != os.path.abspath(new_output_path):
                     try:
@@ -209,18 +209,18 @@ def export_csv(data: Sequence[Sequence[Any]], project_name: str, empty: bool, ex
     return
 
 
-def export_json(data: Sequence[Sequence[Any]], project_name: str, empty: bool, export_option: Dict[str, Any], cwd_new: str, filename_suffix: str) -> None:
+def export_json(data: Sequence[Sequence[Any]], chat_name: str, empty: bool, export_option: Dict[str, Any], cwd_new: str, filename_suffix: str) -> None:
     """
     Exports the provided chat data to a JSON file. If appending is specified in the 
     export option, it merges the new data with content from the latest JSON file based 
-    on the provided project name. The output JSON file contains structured data for 
+    on the provided chat name. The output JSON file contains structured data for
     each message.
 
     Args:
         data: Sequence of sequences containing chat data. Each row contains message 
             details such as sender name, sender ID, message ID, timestamp, message 
             content, translated message, and media path.
-        project_name: A string representing the name of the project to which the 
+        chat_name: A string representing the name of the chat to which the
             data belongs.
         empty: A boolean indicating whether the input data is empty. If True, the 
             function terminates early without performing any operations.
@@ -247,9 +247,9 @@ def export_json(data: Sequence[Sequence[Any]], project_name: str, empty: bool, e
 
     latest_file = None
     if export_option['append']:
-        # Find latest JSON file for this project (if any)
+        # Find latest JSON file for this chat (if any)
         import glob
-        pattern = os.path.join(cwd_new, f'{project_name}_data_*.json')
+        pattern = os.path.join(cwd_new, f'{chat_name}_data_*.json')
         existing_files = sorted(glob.glob(pattern), reverse=True)
 
         if existing_files:
@@ -321,7 +321,7 @@ def export_json(data: Sequence[Sequence[Any]], project_name: str, empty: bool, e
                 return py_dt.strftime('%Y-%m-%d')
             min_str = _fmt_dt(min_dt) or 'unknown'
             max_str = _fmt_dt(max_dt) or 'unknown'
-            candidate = os.path.join(cwd_new, f'{project_name}_data_{min_str}_{max_str}.json')
+            candidate = os.path.join(cwd_new, f'{chat_name}_data_{min_str}_{max_str}.json')
             # If we had an existing latest file, and its path differs, rename it; otherwise just use candidate path
             if latest_file and os.path.abspath(latest_file) != os.path.abspath(candidate):
                 try:
@@ -331,9 +331,9 @@ def export_json(data: Sequence[Sequence[Any]], project_name: str, empty: bool, e
                     latest_file = candidate
             output_path = latest_file or candidate
         except Exception:
-            output_path = latest_file or os.path.join(cwd_new, f'{project_name}_data_{filename_suffix}.json')
+            output_path = latest_file or os.path.join(cwd_new, f'{chat_name}_data_{filename_suffix}.json')
     else:
-        output_path = os.path.join(cwd_new, f'{project_name}_data_{filename_suffix}.json')
+        output_path = os.path.join(cwd_new, f'{chat_name}_data_{filename_suffix}.json')
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(final_data, f, ensure_ascii=False, indent=2)
     print(f'EXTRACTION COMPLETED. Data saved in: {output_path}')
