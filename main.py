@@ -19,26 +19,23 @@ from utils import start
 # Use the project root directory (current working directory where main.py runs)
 cwd = os.getcwd()
 
-# Prompt the user to enter the time frame for message extraction
-start_date = input('Enter start date (YYYY-MM-DD or leave empty for today): ').strip()
-end_date = input('Enter end date (YYYY-MM-DD or leave empty for now): ').strip()
-
-# ===============================
-# Telegram API Credentials
-# ===============================
+# Get API credentials from config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 api_id = config['api_id']
 api_hash = config['api_hash']
 phone_number = config['phone_number']
-
 translation_option = config['translation']
-
 export_option = config['export']
-
 chats = config['chats']
 
+# Prompt the user to enter the time frame for message extraction
+print('Start Telegram Scraper...')
+start_date = input('Enter start date (YYYY-MM-DD or leave empty for today): ').strip()
+end_date = input('Enter end date (YYYY-MM-DD or leave empty for now): ').strip()
+
+# Iterate through chats and start scraping
 for chat in chats:
     chat_name = chat['chat_name']
     chat_id = chat['chat_id']
