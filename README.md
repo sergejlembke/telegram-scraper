@@ -1,4 +1,4 @@
-# 📦 Telegram Scraper Tool
+# 📃 Telegram Scraper Tool
 
 A Python-based scraper built with [Telethon](https://github.com/LonamiWebs/Telethon) to collect data from **Telegram private chats, groups, and channels**.  
 The tool extracts **messages, metadata, user information, and media**, and provides an option for **automatic translation** of messages using [deep_translator](https://pypi.org/project/deep-translator/) (Google Translate API or other supported services).
@@ -103,15 +103,25 @@ pip install -r requirements.txt
 
 CSV file structure:
 
-| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE                      | MESSAGE                | TRANSLATED_MESSAGE | MEDIA_PATH                                   |
-|-------------|-----------|------------|---------------------------|------------------------|--------------------|----------------------------------------------|
-| PythonDev   | 123456789 | 742        | 2025-09-02 10:44:22+00:00 | Ich arbeite mit Python | I work with Python | ./data/PythonLover/PythonLover_photo_742.jpg |
+| SENDER_NAME | SENDER_ID | MESSAGE_ID | DATE                      | MESSAGE                                      | TRANSLATED_MESSAGE                         | MEDIA_PATH                                   |
+|-------------|-----------|------------|---------------------------|----------------------------------------------|--------------------------------------------|----------------------------------------------|
+| PythonDev   | 123456789 | 742        | 2025-09-02 10:44:22+00:00 | Ich arbeite mit Python                       | I work with Python                         |                                              |
+| JohnDoe     | 987654321 | 743        | 2025-09-03 15:30:10+00:00 | Ja, ich auch, sieh dir meinen Screenshot an. | Yes, me too, have a look at my screenshot. | ./data/PythonLover/PythonLover_photo_742.jpg |
 
 ---
 
 ## 📜 License
 
 This project is licensed under the **AGPL-3.0 License** – see the [LICENSE]([LICENSE](https://www.gnu.org/licenses/agpl-3.0.en.html)) file for details.  
+
+---
+
+## 🧩 Third-Party Dependencies
+
+This project uses the following third-party dependencies:
+
+- [Telethon](https://github.com/LonamiWebs/Telethon)
+- [deep_translator](https://pypi.org/project/deep-translator/)
 
 ---
 
