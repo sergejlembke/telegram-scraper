@@ -3,7 +3,7 @@
 A Python-based scraper built with [Telethon](https://github.com/LonamiWebs/Telethon) to collect data from **Telegram private chats, groups, and channels**.  
 The tool extracts **messages, metadata, user information, and media**, and provides an option for **automatic translation** of messages using [deep_translator](https://pypi.org/project/deep-translator/) (Google Translate API or other supported services).
 
-All collected data can be stored in a **pandas DataFrame** or exported to **CSV** for further analysis.
+All collected data is stored in a **pandas DataFrame** and can be exported as **CSV** and/or **JSON** for further analysis.
 
 ---
 
