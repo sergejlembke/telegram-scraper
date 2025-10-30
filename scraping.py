@@ -12,7 +12,7 @@
 # --- Standard library imports ---
 import asyncio
 from datetime import datetime, timezone
-from typing import List, Tuple, Union, Dict, Any
+from typing import Union, Any
 
 # --- Third-party imports ---
 from telethon import TelegramClient
@@ -25,7 +25,7 @@ from telethon.tl.types import PeerUser
 # nest_asyncio.apply()
 
 
-def scraping(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], chat_name: str, api_id: int, api_hash: str, phone_number: str, translation_option: Dict[str, Any], cwd_new: str) -> Tuple[List[List[Any]], bool]:
+def scraping(start_date: Union[str, datetime, None], end_date: Union[str, datetime, None], chat_id: Union[str, int], chat_name: str, api_id: int, api_hash: str, phone_number: str, translation_option: dict[str, Any], cwd_new: str) -> tuple[list[list[Any]], bool]:
     """
     Extracts and processes messages from a Telegram group or channel for a specified time frame.
 
@@ -48,7 +48,7 @@ def scraping(start_date: Union[str, datetime, None], end_date: Union[str, dateti
         cwd_new: Current working directory or path to save related files such as session, extracted media, etc.
 
     Returns:
-        Tuple[List[List[Any]], bool]: A tuple containing a list of message metadata and a boolean `empty`,
+        tuple[list[list[Any]], bool]: A tuple containing a list of message metadata and a boolean `empty`,
             where the list includes details such as sender, message ID, date, text, translation, and file path
             for any downloaded media, and `empty` indicates whether any messages were found.
     """
